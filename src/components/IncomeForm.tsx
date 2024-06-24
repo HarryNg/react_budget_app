@@ -28,6 +28,11 @@ export default function IncomeForm() {
         setIncomes((preIncome) => {
             return [...preIncome, newIncome]
         })
+        setIncome({
+            source: '',
+            amount: 0,
+            date: ''
+        })
     }
 
     const totalIncome = incomes.reduce((acc, income) => {
@@ -57,7 +62,7 @@ export default function IncomeForm() {
                     onChange={handleChange}/>
             </div>
             <div className='formField'>
-                <label htmlFor='date'>Income source</label> <br/>
+                <label htmlFor='date'>Date of income</label> <br/>
                 <input 
                     type="date" 
                     name='date' 
