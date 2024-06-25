@@ -1,8 +1,9 @@
+import { useState } from "react";
+
 import IncomeForm from "./components/IncomeForm";
 import ExpenseForm from "./components/ExpenseForm";
 import TargetForm from "./components/TargetForm";
 import TransferSaving from "./components/TransferSaving";
-import { useState } from "react";
 
 function App() {
   const [totalIncome, setTotalIncome] = useState(0)

@@ -1,11 +1,7 @@
-
-import { useState, ChangeEvent, FormEvent } from 'react'
-import { Transaction } from '../types'
 import { nanoid } from 'nanoid'
+import { useState, ChangeEvent, FormEvent } from 'react'
 
-type ExpenseFormProps = {
-    onGetTotalExpense: (expense: number) => void
-}
+import { Transaction,ExpenseFormProps } from '../types'
 
 export default function ExpenseForm (props:ExpenseFormProps) {
     const [expense, setExpense] = useState<Omit<Transaction, 'id'>>({
@@ -30,10 +26,16 @@ export default function ExpenseForm (props:ExpenseFormProps) {
             amount: expense.amount,
             date: expense.date
         }
+
         setExpenses((prevExpense) => {
             return [...prevExpense, newExpense]
         })
         
+        setExpense({
+            source: '',
+            amount: 0,
+            date: ''
+        })
     }
 
     const totalExpense = expenses.reduce((acc, expense) => {
@@ -41,6 +43,12 @@ export default function ExpenseForm (props:ExpenseFormProps) {
     }
     , 0)
     props.onGetTotalExpense(totalExpense)
+
+    const handleBtnDelete = (id: string) : void => {
+        setExpenses((prevExpense) => {
+            return prevExpense.filter(expense => expense.id !== id)
+        })
+    }
     return (
         <div>
             <form className="form" onSubmit={handleSubmit}>
@@ -79,7 +87,10 @@ export default function ExpenseForm (props:ExpenseFormProps) {
                 <ul>
                     {expenses.map((expense) => {
                         return (
-                            <li>{expense.source}: {expense.amount}EUR on {expense.date}</li>
+                            <li key={expense.id}>
+                                {expense.source}: {expense.amount}EUR on {expense.date}
+                                <button onClick={() => handleBtnDelete(expense.id)}>X</button>
+                            </li>
                         )
                     })
                     }

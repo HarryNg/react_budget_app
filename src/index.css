@@ -12,7 +12,6 @@
     grid-template-columns: auto auto auto;
     column-gap: 10rem;
     margin-top: 2rem;
-    /* width: 100vw; */
 }
 .form {
     display: flex;

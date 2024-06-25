@@ -1,11 +1,9 @@
 import { nanoid } from 'nanoid'
 
 import {ChangeEvent, FormEvent, useState} from 'react'
-import { Transaction } from '../types'
+import { Transaction, IncomeTypeProps } from '../types'
 
-type IncomeTypeProps = {
-    onGetTotalIncome: (income: number) => void
-}
+
 export default function IncomeForm(props: IncomeTypeProps) {
     const [income, setIncome] = useState<Omit<Transaction, 'id'>>({
         source: '',
@@ -42,6 +40,12 @@ export default function IncomeForm(props: IncomeTypeProps) {
         return acc + Number(income.amount)
     }, 0)
     props.onGetTotalIncome(totalIncome)
+
+    const handleBtnDelete = (id: string) => {
+        setIncomes((prevIncome) => {
+            return prevIncome.filter(income => income.id !== id)
+        })
+    }
     return (
     <div>
         <form onSubmit={handleFormSubmit} className='form'>
@@ -82,6 +86,7 @@ export default function IncomeForm(props: IncomeTypeProps) {
                 return (
                 <li key={income.id}>
                     {income.source}: {income.amount}EUR on {income.date}
+                    <button onClick= {()=> handleBtnDelete(income.id)}>X</button>
                 </li>
                 )
             })}

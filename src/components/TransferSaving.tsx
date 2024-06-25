@@ -1,10 +1,6 @@
 import {useState, ChangeEvent, FormEvent} from 'react'
 
-type TransferSavingProps = {
-    totalIncome: number,
-    totalExpense: number,
-    onGetTotalSaving: (saving: number) => void
-}
+import { TransferSavingProps } from '../types'
 
 function TransferSaving(props: TransferSavingProps) {
     const [saving, setSaving] = useState(0)
