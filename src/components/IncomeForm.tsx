@@ -3,7 +3,10 @@ import { nanoid } from 'nanoid'
 import {ChangeEvent, FormEvent, useState} from 'react'
 import { Transaction } from '../types'
 
-export default function IncomeForm() {
+type IncomeTypeProps = {
+    onGetTotalIncome: (income: number) => void
+}
+export default function IncomeForm(props: IncomeTypeProps) {
     const [income, setIncome] = useState<Omit<Transaction, 'id'>>({
         source: '',
         amount: 0,
@@ -38,7 +41,7 @@ export default function IncomeForm() {
     const totalIncome = incomes.reduce((acc, income) => {
         return acc + Number(income.amount)
     }, 0)
-
+    props.onGetTotalIncome(totalIncome)
     return (
     <div>
         <form onSubmit={handleFormSubmit} className='form'>
@@ -72,7 +75,7 @@ export default function IncomeForm() {
             </div>
             <button type="submit" >Add income</button>
         </form>
-        <p>Total Income: {totalIncome}</p>
+        {/* <p>Total Income: {totalIncome}</p> */}
         {incomes && incomes.length > 0 ? (
         <ul>
             {incomes.map((income) => {

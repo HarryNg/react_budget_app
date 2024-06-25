@@ -3,7 +3,11 @@ import { useState, ChangeEvent, FormEvent } from 'react'
 import { Transaction } from '../types'
 import { nanoid } from 'nanoid'
 
-export default function ExpenseForm () {
+type ExpenseFormProps = {
+    onGetTotalExpense: (expense: number) => void
+}
+
+export default function ExpenseForm (props:ExpenseFormProps) {
     const [expense, setExpense] = useState<Omit<Transaction, 'id'>>({
         source: '',
         amount: 0,
@@ -36,7 +40,7 @@ export default function ExpenseForm () {
         return acc + Number(expense.amount)
     }
     , 0)
-
+    props.onGetTotalExpense(totalExpense)
     return (
         <div>
             <form className="form" onSubmit={handleSubmit}>
@@ -70,7 +74,7 @@ export default function ExpenseForm () {
                 </div>
                 <button type="submit">Add Expense</button>
             </form>
-            <p>Total expense: {totalExpense}</p>
+            {/* <p>Total expense: {totalExpense}</p> */}
             {expenses && expenses.length > 0 ? (
                 <ul>
                     {expenses.map((expense) => {
