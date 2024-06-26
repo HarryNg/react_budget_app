@@ -7,6 +7,7 @@ import {useForm} from 'react-hook-form'
 import { Transaction,ExpenseFormProps } from '../types'
 import { getFromLocalStorage,saveToLocalStorage } from '../utils/localStorage'
 import { expenseSchema } from '../utils/validation'
+import { exportToCSV } from '../utils/exportToCSV'
 
 type ExpenseFormData = z.infer<typeof expenseSchema>;
 
@@ -44,6 +45,11 @@ export default function ExpenseForm (props:ExpenseFormProps) {
             return prevExpense.filter(expense => expense.id !== id)
         })
     }
+
+    const handleExportExpenses = () => {
+        exportToCSV(getFromLocalStorage('expenses') , 'expenses.csv')
+    }
+
     return (
         <div>
             <form className="form" onSubmit={handleSubmit(onSubmit)}>
@@ -84,6 +90,8 @@ export default function ExpenseForm (props:ExpenseFormProps) {
                     }
                 </ul>
             ): (<p>No expense yet</p>)}
+            
+            <button onClick={handleExportExpenses}>Export Expenses</button>
         </div>
     )
 }

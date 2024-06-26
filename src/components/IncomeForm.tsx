@@ -7,6 +7,7 @@ import {useForm} from 'react-hook-form'
 import { Transaction, IncomeTypeProps } from '../types'
 import { getFromLocalStorage,saveToLocalStorage } from '../utils/localStorage'
 import { incomeSchema } from '../utils/validation'
+import { exportToCSV } from '../utils/exportToCSV'
 
 type IncomeFormData = z.infer<typeof incomeSchema>;
 
@@ -44,6 +45,11 @@ export default function IncomeForm(props: IncomeTypeProps) {
             return prevIncome.filter(income => income.id !== id)
         })
     }
+
+    const handleExportIncomes = () => {
+        exportToCSV(getFromLocalStorage('incomes') , 'incomes.csv')
+    }
+
     return (
     <div>
         <form onSubmit={handleSubmit(onSubmit)} className='form'>
@@ -81,6 +87,8 @@ export default function IncomeForm(props: IncomeTypeProps) {
             })}
         </ul>
         ) : (<p>No income yet</p>)}
+        
+        <button onClick={handleExportIncomes}>Export Incomes</button>
     </div>
   )
 }
