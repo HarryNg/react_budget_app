@@ -12,7 +12,7 @@ function TransferSaving(props: TransferSavingProps) {
     const [totalSaving, setTotalSaving] = useState(() => getFromLocalStorage('totalSaving') || 0)
 
     const savingAmountSchema = z.object({
-        saving: z.number().refine(data => data >= 0 && data<= totalBalance, {message: 'Amount must be greater than 0 and less than total balance'})
+        saving: z.number().refine(data => data >= 0 && data<= totalBalance, {message: 'Amount must be greater than 0 and less than current balance'})
     });
     type SavingFormData = z.infer<typeof savingAmountSchema>
 
