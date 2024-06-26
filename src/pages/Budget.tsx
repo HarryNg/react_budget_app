@@ -3,6 +3,7 @@ import IncomeForm from '../components/IncomeForm'
 import ExpenseForm from '../components/ExpenseForm'
 import TargetForm from '../components/TargetForm'
 import TransferSaving from '../components/TransferSaving'
+import Chart from '../components/Chart'
 
 const Budget = () => {
     const [totalIncome, setTotalIncome] = useState(0)
@@ -29,6 +30,7 @@ const Budget = () => {
             <TargetForm totalSaving={totalSaving}/>
             </div>
             <TransferSaving totalIncome={totalIncome} totalExpense={totalExpense} onGetTotalSaving={getTotalSaving}/>
+            <Chart totalIncome={totalIncome} totalExpense={totalExpense} />
         </div>
       </>
     );
