@@ -1,15 +1,18 @@
+import { useState, useEffect } from 'react'
 import { nanoid } from 'nanoid'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import {useForm} from 'react-hook-form'
 
-import {ChangeEvent, FormEvent, useState, useEffect} from 'react'
 import { Transaction, IncomeTypeProps } from '../types'
 import { getFromLocalStorage,saveToLocalStorage } from '../utils/localStorage'
+import { incomeSchema } from '../utils/validation'
 
+type IncomeFormData = z.infer<typeof incomeSchema>;
 
 export default function IncomeForm(props: IncomeTypeProps) {
-    const [income, setIncome] = useState<Omit<Transaction, 'id'>>({
-        source: '',
-        amount: 0,
-        date: ''
+    const { register, handleSubmit, reset, formState: { errors}} = useForm<IncomeFormData>({
+        resolver: zodResolver(incomeSchema)
     })
     const [incomes, setIncomes] = useState<Transaction[]>(() => getFromLocalStorage('incomes') || [])
 
@@ -17,28 +20,18 @@ export default function IncomeForm(props: IncomeTypeProps) {
         saveToLocalStorage('incomes', incomes);
     }, [incomes]);
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setIncome((prevState) => {
-            return { ...prevState, [e.target.name]: e.target.value}
-        })
-    }
 
-    const handleFormSubmit = (e: FormEvent) => {
-        e.preventDefault()
+    const onSubmit = (data: IncomeFormData) => {
         const newIncome = {
             id: nanoid(),
-            source: income.source,
-            amount: income.amount,
-            date: income.date
+            source: data.source,
+            amount: data.amount,
+            date: data.date
         }
         setIncomes((preIncome) => {
             return [...preIncome, newIncome]
         })
-        setIncome({
-            source: '',
-            amount: 0,
-            date: ''
-        })
+        reset()
     }
 
     const totalIncome = incomes.reduce((acc, income) => {
@@ -53,38 +46,29 @@ export default function IncomeForm(props: IncomeTypeProps) {
     }
     return (
     <div>
-        <form onSubmit={handleFormSubmit} className='form'>
+        <form onSubmit={handleSubmit(onSubmit)} className='form'>
             <div className='formField'>
                 <label htmlFor='source'>Income source</label> <br/>
                 <input 
-                    type="text" 
-                    name='source' 
-                    id='source'
-                    value={income.source}
-                    onChange={handleChange}
+                    type="text" {...register('source')}
                     placeholder='Salary'/>
+                {errors.source && <span>{errors.source.message}</span>}
             </div>
             <div className='formField'>
                 <label htmlFor='amount'>Amount of income</label> <br/>
                 <input 
-                    type="text" 
-                    name='amount' 
-                    id='amount'
-                    value={income.amount}
-                    onChange={handleChange}/>
+                    type="text" {...register('amount', {valueAsNumber:true})}/>
+                {errors.amount && <span>{errors.amount.message}</span>}
             </div>
             <div className='formField'>
                 <label htmlFor='date'>Date of income</label> <br/>
                 <input 
-                    type="date" 
-                    name='date' 
-                    id='date'
-                    value={income.date}
-                    onChange={handleChange}/>
+                    type="date" {...register('date')}/>
+                {errors.date && <span>{errors.date.message}</span>}
             </div>
             <button type="submit" >Add income</button>
         </form>
-        {/* <p>Total Income: {totalIncome}</p> */}
+        
         {incomes && incomes.length > 0 ? (
         <ul>
             {incomes.map((income) => {

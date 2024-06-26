@@ -1,47 +1,37 @@
+import { useState,useEffect } from 'react'
 import { nanoid } from 'nanoid'
-import { useState,useEffect, ChangeEvent, FormEvent } from 'react'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import {useForm} from 'react-hook-form'
 
 import { Transaction,ExpenseFormProps } from '../types'
 import { getFromLocalStorage,saveToLocalStorage } from '../utils/localStorage'
+import { expenseSchema } from '../utils/validation'
+
+type ExpenseFormData = z.infer<typeof expenseSchema>;
 
 export default function ExpenseForm (props:ExpenseFormProps) {
-    const [expense, setExpense] = useState<Omit<Transaction, 'id'>>({
-        source: '',
-        amount: 0,
-        date: ''
-    })
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<ExpenseFormData>({
+        resolver: zodResolver(expenseSchema),
+    });
 
     const [expenses, setExpenses] = useState<Transaction[]>(() => getFromLocalStorage('expenses') || [])
     
     useEffect(() => {
         saveToLocalStorage('expenses', expenses);
     }, [expenses]);
+
+    const onSubmit = (data: ExpenseFormData) => {
+        const newExpense: Transaction = {
+          id: nanoid(),
+          source: data.source,
+          amount: data.amount,
+          date: data.date,
+        };
     
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setExpense((prevState) => {
-            return { ...prevState, [event.target.name]: event.target.value}
-        })
-    }
-
-    const handleSubmit = (event: FormEvent) => {
-        event.preventDefault()
-        const newExpense = {
-            id : nanoid(),
-            source: expense.source,
-            amount: expense.amount,
-            date: expense.date
-        }
-
-        setExpenses((prevExpense) => {
-            return [...prevExpense, newExpense]
-        })
-        
-        setExpense({
-            source: '',
-            amount: 0,
-            date: ''
-        })
-    }
+        setExpenses((prevExpense) => [...prevExpense, newExpense]);
+        reset();
+    };
 
     const totalExpense = expenses.reduce((acc, expense) => {
         return acc + Number(expense.amount)
@@ -56,38 +46,31 @@ export default function ExpenseForm (props:ExpenseFormProps) {
     }
     return (
         <div>
-            <form className="form" onSubmit={handleSubmit}>
+            <form className="form" onSubmit={handleSubmit(onSubmit)}>
                 <div className="formField">
                     <label htmlFor="source">Expense source</label><br/>
                     <input 
-                        type="text"
-                        name="source"
-                        id="source"
-                        value={expense.source}
-                        onChange={handleChange}
+                        type="text" {...register('source')}
                         placeholder="Phone Bill" />
+                    {errors.source && <span>{errors.source.message}</span>}
                 </div>
                 <div className="formField">
                     <label htmlFor="amount">Amount of expense</label><br/>
                     <input 
-                        type="number"
-                        name="amount"
-                        id="amount"
-                        onChange={handleChange}
-                        value={expense.amount} />
+                        type="number" {...register('amount', {valueAsNumber: true })}
+                    />
+                    {errors.amount && <span>{errors.amount.message}</span>}
                 </div>
                 <div className="formField">
                     <label htmlFor="date">Date of expense</label><br/>
                     <input 
-                        type="date"
-                        name="date"
-                        id="date"
-                        onChange={handleChange}
-                        value={expense.date} />
+                        type="date" {...register('date')}
+                        />
+                    {errors.date && <span>{errors.date.message}</span>}
                 </div>
                 <button type="submit">Add Expense</button>
             </form>
-            {/* <p>Total expense: {totalExpense}</p> */}
+            
             {expenses && expenses.length > 0 ? (
                 <ul>
                     {expenses.map((expense) => {
