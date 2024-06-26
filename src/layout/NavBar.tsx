@@ -1,14 +1,18 @@
-import { Outlet } from 'react-router-dom'
+import { Link, Outlet } from 'react-router-dom'
 
 const NavBar = () => {
   return (
-    <nav>
+    <div className="navbar-container">
+      <nav className="sidebar">
         <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/budget-app">Budget-App</a></li>
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/budget-app">Budget</Link></li>
         </ul>
+      </nav>
+      <div className="content">
         <Outlet />
-    </nav>
+      </div>
+    </div>
   )
 }
 
