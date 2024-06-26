@@ -1,7 +1,8 @@
 import { nanoid } from 'nanoid'
-import { useState, ChangeEvent, FormEvent } from 'react'
+import { useState,useEffect, ChangeEvent, FormEvent } from 'react'
 
 import { Transaction,ExpenseFormProps } from '../types'
+import { getFromLocalStorage,saveToLocalStorage } from '../utils/localStorage'
 
 export default function ExpenseForm (props:ExpenseFormProps) {
     const [expense, setExpense] = useState<Omit<Transaction, 'id'>>({
@@ -10,8 +11,12 @@ export default function ExpenseForm (props:ExpenseFormProps) {
         date: ''
     })
 
-    const [expenses, setExpenses] = useState<Transaction[]>([])
-
+    const [expenses, setExpenses] = useState<Transaction[]>(() => getFromLocalStorage('expenses') || [])
+    
+    useEffect(() => {
+        saveToLocalStorage('expenses', expenses);
+    }, [expenses]);
+    
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         setExpense((prevState) => {
             return { ...prevState, [event.target.name]: event.target.value}

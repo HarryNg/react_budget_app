@@ -1,7 +1,12 @@
-import { useState, FormEvent, ChangeEvent } from "react"
+import { useState, FormEvent, ChangeEvent, useEffect } from "react"
+import { getFromLocalStorage,saveToLocalStorage } from '../utils/localStorage'
 
 export default function TargetForm(props: {totalSaving: number}) {
-    const [target, setTarget] = useState(0)
+    const [target, setTarget] = useState(() => getFromLocalStorage('target') || 0)
+
+    useEffect(() => {
+        saveToLocalStorage('target', target)
+    }, [target])
 
     const handleTargetChange = (event: ChangeEvent<HTMLInputElement>) => {
         setTarget(Number(event.target.value))

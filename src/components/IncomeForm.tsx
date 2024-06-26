@@ -1,7 +1,8 @@
 import { nanoid } from 'nanoid'
 
-import {ChangeEvent, FormEvent, useState} from 'react'
+import {ChangeEvent, FormEvent, useState, useEffect} from 'react'
 import { Transaction, IncomeTypeProps } from '../types'
+import { getFromLocalStorage,saveToLocalStorage } from '../utils/localStorage'
 
 
 export default function IncomeForm(props: IncomeTypeProps) {
@@ -10,7 +11,11 @@ export default function IncomeForm(props: IncomeTypeProps) {
         amount: 0,
         date: ''
     })
-    const [incomes, setIncomes] = useState<Transaction[]>([])
+    const [incomes, setIncomes] = useState<Transaction[]>(() => getFromLocalStorage('incomes') || [])
+
+    useEffect(() => {
+        saveToLocalStorage('incomes', incomes);
+    }, [incomes]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setIncome((prevState) => {

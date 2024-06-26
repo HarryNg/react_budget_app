@@ -1,10 +1,16 @@
-import {useState, ChangeEvent, FormEvent} from 'react'
+import {useState, ChangeEvent, FormEvent, useEffect} from 'react'
 
 import { TransferSavingProps } from '../types'
+import { getFromLocalStorage,saveToLocalStorage } from '../utils/localStorage'
 
 function TransferSaving(props: TransferSavingProps) {
     const [saving, setSaving] = useState(0)
-    const [totalSaving, setTotalSaving] = useState(0)
+    const [totalSaving, setTotalSaving] = useState(() => getFromLocalStorage('totalSaving') || 0)
+
+    useEffect(() => {
+        saveToLocalStorage('totalSaving', totalSaving)
+    }, [totalSaving])
+    
     const totalBalance = props.totalIncome - props.totalExpense - totalSaving
 
     const handleSavingChange = (event: ChangeEvent<HTMLInputElement>) => {
