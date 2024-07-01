@@ -2,6 +2,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Budget from './pages/Budget';
 import Home from './pages/Home';
 import NavBar from './layout/NavBar';
+import ChartPage from './pages/ChartPage';
 
 
 const router = createBrowserRouter([
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
       {
         path: '/budget-app',
         element: <Budget  />,
+      },
+      {
+        path: '/chart',
+        element: <ChartPage  />,
       },
       {
         path: '*',

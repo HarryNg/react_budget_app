@@ -3,9 +3,6 @@ import IncomeForm from '../components/IncomeForm'
 import ExpenseForm from '../components/ExpenseForm'
 import TargetForm from '../components/TargetForm'
 import TransferSaving from '../components/TransferSaving'
-import Chart from '../components/Chart'
-import { exportToCSV } from '../utils/exportToCSV'
-import { getFromLocalStorage } from '../utils/localStorage'
 
 const Budget = () => {
     const [totalIncome, setTotalIncome] = useState(0)
@@ -32,7 +29,7 @@ const Budget = () => {
             <TargetForm totalSaving={totalSaving}/>
             </div>
             <TransferSaving totalIncome={totalIncome} totalExpense={totalExpense} onGetTotalSaving={getTotalSaving}/>
-            <Chart totalIncome={totalIncome} totalExpense={totalExpense} />
+            
         </div>
       </>
     );
